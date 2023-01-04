@@ -30,13 +30,42 @@ var uiController = (function() {
 // Санххүтэй ажиллах контроллер
 var financeController = (function() {
 
+    var Income = function(id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var Expense = function(id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var data = {
+        // Орлого-Зарлагаа хадгалах
+        allItems: {
+            inc: [],
+            exp: []
+        },
+
+        // Орлого зарлагын нийлбэр
+        totals: {
+            inc: 0,
+            exp: 0
+        }
+    }
+
+    //data.allItems.inc.push(i1);
+    //data.allItems.inc[0];
+    
 })();
 
 // Програмын холбогч контролллер
 var appController = (function(uiController, financeController) {
 
     //Шинэ БУЦААЛТАА уншихын тулд хувьсагчид өгөдлийг түүгээрээ дамжуулж өгөгдлөө уншиж авна.
-    var DOM = uiController.getDOMstrings();
+    
 
     var ctrlAddItem = function() {
         
@@ -47,8 +76,12 @@ var appController = (function(uiController, financeController) {
         // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
         // 4. Төсвийг тооцоолно.
         // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
-    }
-    //Товч дарахад хийх үйлдэл
+    };
+
+    var setupEventListeners = function() {
+        var DOM = uiController.getDOMstrings();
+
+        //Товч дарахад хийх үйлдэл
     document.querySelector(DOM.addBtn).addEventListener('click', function() {
         ctrlAddItem();
     });
@@ -59,5 +92,14 @@ var appController = (function(uiController, financeController) {
             ctrlAddItem();
         }
     });
+    };
 
+    return {
+        init: function() {
+            console.log("App started ..");
+            setupEventListeners();
+        }
+    };
 })(uiController, financeController);
+
+appController.init();
