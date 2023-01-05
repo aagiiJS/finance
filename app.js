@@ -44,7 +44,7 @@ var financeController = (function() {
 
     var data = {
         // Орлого-Зарлагаа хадгалах
-        allItems: {
+        items: {
             inc: [],
             exp: []
         },
@@ -58,9 +58,22 @@ var financeController = (function() {
 
     return {
         addItem: function(type, desc, val) {
-            console.log("item added");
+            var item, id;
+
+            if(data.items[type].length === 0) id = 1;
+            else {
+                id = data.items[type][data.items[type].length - 1].id + 1;
+            }
+
+            if(type === "inc") {
+                item = new Income(id, desc, val);
+            } else {
+                item = new Expense(id, desc, val);
+            }
+
+            data.items[type].push(item);
         }
-    }
+    };
 
 
     //data.allItems.inc.push(i1);
@@ -72,17 +85,13 @@ var financeController = (function() {
 var appController = (function(uiController, financeController) {
 
     //Шинэ БУЦААЛТАА уншихын тулд хувьсагчид өгөдлийг түүгээрээ дамжуулж өгөгдлөө уншиж авна.
-    
-
     var ctrlAddItem = function() {
-        
-        
-        // 1. Оруулах өгөдлийг дэлгэцээс олж авна
+       // 1. Оруулах өгөдлийг дэлгэцээс олж авна
         var input = uiController.getInput();
 
-        console.log(input);
         // 2. Олж авсан өгөгдлүүдээ Санхүүгийн контроллерт дамжуулж тэнд хадгална.
-        financeController.addItem();
+        financeController.addItem(input.type, input.description, input.value);
+        
         // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
         // 4. Төсвийг тооцоолно.
         // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
