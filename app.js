@@ -29,7 +29,7 @@ var uiController = (function() {
 
 // Санххүтэй ажиллах контроллер
 var financeController = (function() {
-
+    // private data-нууцлагдсан өгөгдлүүд
     var Income = function(id, description, value) {
         this.id = id;
         this.description = description;
@@ -54,7 +54,14 @@ var financeController = (function() {
             inc: 0,
             exp: 0
         }
+    };
+
+    return {
+        addItem: function(type, desc, val) {
+            console.log("item added");
+        }
     }
+
 
     //data.allItems.inc.push(i1);
     //data.allItems.inc[0];
@@ -71,8 +78,11 @@ var appController = (function(uiController, financeController) {
         
         
         // 1. Оруулах өгөдлийг дэлгэцээс олж авна
-        console.log(uiController.getInput());
+        var input = uiController.getInput();
+
+        console.log(input);
         // 2. Олж авсан өгөгдлүүдээ Санхүүгийн контроллерт дамжуулж тэнд хадгална.
+        financeController.addItem();
         // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
         // 4. Төсвийг тооцоолно.
         // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
