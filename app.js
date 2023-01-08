@@ -66,7 +66,7 @@ var uiController = (function() {
     };
 })();
 
-// Санххүтэй ажиллах контроллер
+// Санхүүтэй ажиллах контроллер
 var financeController = (function() {
     // private data-нууцлагдсан өгөгдлүүд
     var Income = function(id, description, value) {
@@ -81,6 +81,15 @@ var financeController = (function() {
         this.value = value;
     };
 
+    var calculateTotal = function(type) {
+        var sum = 0;
+        data.items[type].forEach(function(el) {
+            sum = sum + el.value;
+        });
+
+        data.totals[type] = sum;
+    };
+
     var data = {
         // Орлого-Зарлагаа хадгалах
         items: {
@@ -92,10 +101,33 @@ var financeController = (function() {
         totals: {
             inc: 0,
             exp: 0
-        }
+        },
+
+        tusuv: 0,
+        huvi: 0
     };
 
     return {
+        tusuvTootsooloh: function() {
+            // Нийт орлогын нийлбэр
+            calculateTotal('inc');
+            // Нийт зарлагын нийлбэр
+            calculateTotal('exp');
+            // Төсвийг шинээр тооцох
+            data.tusuv = data.totals.inc - data.totals.exp;
+            //Орлого, зарлагын хувийг тооцоолох
+            data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+        },
+
+        tusviigAvah: function() {
+            return {
+                tusuv: data.tusuv,
+                huvi: data.huvi,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp
+            }
+        },
+
         addItem: function(type, desc, val) {
             var item, id;
 
@@ -140,7 +172,11 @@ var appController = (function(uiController, financeController) {
         uiController.addListItem(item, input.type);
         uiController.clearFields();
         // 4. Төсвийг тооцоолно.
-        // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+        financeController.tusuvTootsooloh();
+        // 5. Эцсийн үлдэгдэл, 
+        var tusuv = financeController.tusviigAvah();
+        // 6.тооцоог дэлгэцэнд гаргана.
+        console.log(tusuv);
     };
 
     var setupEventListeners = function() {
