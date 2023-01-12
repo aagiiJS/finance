@@ -13,7 +13,8 @@ var uiController = (function() {
         ExpenseLabel: ".budget__expenses--value",
         percentageLabel: ".budget__expenses--percentage",
         containerDiv: ".container",
-        expensePersentageLabel: ".item__percentage"
+        expensePersentageLabel: ".item__percentage",
+        dateLabel: ".budget__title--month"
     };
 
     var nodeListForeach = function(list, callback) {
@@ -22,7 +23,42 @@ var uiController = (function() {
         }
     };
 
+    // Тоог форматлах
+    var formatMoney = function(too, type) {
+        too = '' + too;
+        var a = too;
+
+    var x = a.split("").reverse().join("");
+
+    var y = '';
+    var count = 1;
+
+    for(var i=0; i < x.length; i++)
+    {
+    y = y + x[i];
+
+    if( count%3 === 0 ) y = y + ',';
+    count ++;
+    }
+
+    var z = y.split("").reverse().join("");
+    
+    if(z[0] === ',') z = z.substring(1, z.length - 1);
+
+    if(type === 'inc') z = '+ ' + z;
+    else z = '- ' + z;
+
+    return z;
+
+    };
+
     return {
+        displayDate: function() {
+            var unuudur = new Date();
+            document.querySelector(DOMstrings.dateLabel).textContent = unuudur.getFullYear() + " оны " + unuudur.getMonth() + " сарын ";
+
+        },
+
         getInput: function() {
             return {
                 //Орлого зарлага алийг сонгосныг авах
@@ -69,8 +105,11 @@ var uiController = (function() {
         },
 
         tusviigUzuuleh: function(tusuv) {
-            document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
-            document.querySelector(DOMstrings.incomeLabel).textContent = tusuv.totalInc;
+            var type;
+            if(tusuv.tusuv > 0) type = 'inc';
+            else type = 'exp';
+            document.querySelector(DOMstrings.tusuvLabel).textContent = formatMoney(tusuv.tusuv, type);
+            document.querySelector(DOMstrings.incomeLabel).textContent = formatMoney(tusuv.totalInc, 'inc');
             
             if(tusuv.huvi !== 0) {
                 document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi + '%';
@@ -78,7 +117,7 @@ var uiController = (function() {
                 document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi;
             }
             
-            document.querySelector(DOMstrings.ExpenseLabel).textContent = tusuv.totalExp;
+            document.querySelector(DOMstrings.ExpenseLabel).textContent = formatMoney(tusuv.totalExp, 'exp');
         },
 
         // Дэлгэцээс бичлэг устгах function
@@ -95,13 +134,13 @@ var uiController = (function() {
                 html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             } else {
                 list = DOMstrings.expenseList;
-                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">- %VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
 
             // Тэр HTML дотроо орлого зарлагын утгуудыг REPLACE ашиглан өөрчилнө
             html = html.replace('%id%', item.id);
             html = html.replace('%DESCRIPTION%', item.description);
-            html = html.replace('%VALUE%', item.value);
+            html = html.replace('%VALUE%', formatMoney(item.value, type));
             // Бэлтгэсэн HTML-ээ DOM руу хийж өгнө
             document.querySelector(list).insertAdjacentHTML("beforeend", html);
         }
@@ -325,6 +364,7 @@ var appController = (function(uiController, financeController) {
     return {
         init: function() {
             console.log("App started ..");
+            uiController.displayDate();
             uiController.tusviigUzuuleh({
                 tusuv: 0,
                 huvi: 0,
