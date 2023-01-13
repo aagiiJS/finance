@@ -58,7 +58,22 @@ var uiController = (function() {
             document.querySelector(DOMstrings.dateLabel).textContent = unuudur.getFullYear() + " оны " + unuudur.getMonth() + " сарын ";
 
         },
-
+        changeType: function() {
+            var fields = document.querySelectorAll(
+              DOMstrings.inputType +
+                ", " +
+                DOMstrings.inputDesc +
+                ", " +
+                DOMstrings.inputValue
+            );
+      
+            nodeListForeach(fields, function(el) {
+              el.classList.toggle("red-focus");
+            });
+      
+            document.querySelector(DOMstrings.addBtn).classList.toggle("red");
+        },
+        
         getInput: function() {
             return {
                 //Орлого зарлага алийг сонгосныг авах
@@ -97,11 +112,7 @@ var uiController = (function() {
             
             // Курсорыг дуудах
             fieldsArr[0].focus();
-            /*
-            for(var i = 0; i < fieldsArr.length; i++) {
-                fieldsArr[i].value = "";
-            }*/
-
+            
         },
 
         tusviigUzuuleh: function(tusuv) {
@@ -270,11 +281,6 @@ var financeController = (function() {
             return item;
         }
     };
-
-
-    //data.allItems.inc.push(i1);
-    //data.allItems.inc[0];
-    
 })();
 
 // Програмын холбогч контролллер
@@ -333,6 +339,12 @@ var appController = (function(uiController, financeController) {
             ctrlAddItem();
         }
     });
+
+    // Орлого зарлага оруулахад өнгө өөрчлөх
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiController.changeType);
+        
     // Орлого, зарлагаас бичлэг устгах
     //containerDiv=".container"-ээр лист үүгэнэ
     document.querySelector(DOM.containerDiv).addEventListener('click', function(event) {
